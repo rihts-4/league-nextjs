@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { League, Team, Player, Game } from '@/types';``
 import { Layout } from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { useMockData } from '@/hooks/useMockData';
+// import { useMockData } from '@/hooks/useMockData';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
   Trophy, 
@@ -18,11 +19,53 @@ import {
   Eye
 } from 'lucide-react';
 import Link from 'next/link';
+import { 
+  leagueService,
+  teamService,
+  playerService,
+  gameService
+ } from '@/services/supabaseService';
 
 export default function AdminDashboard() {
   const { isAdmin } = useAuth();
-  const { leagues, teams, players, games } = useMockData();
 
+  /* ======================================================== 
+  * START OF FETCHING DATA FROM SUPABASE 
+  * ======================================================== */
+  const [leagues, setLeagues] = useState<League[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [games, setGames] = useState<Game[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const leagues = await leagueService.getLeagues();
+        setLeagues(leagues);
+        
+        const teams = await teamService.getTeams();
+        setTeams(teams);
+        
+        const players = await playerService.getPlayers();
+        setPlayers(players);
+        
+        const games = await gameService.getGames();
+        setGames(games);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  /* ======================================================== 
+  * END OF FETCHING DATA FROM SUPABASE 
+  * ======================================================== */
+
+  /* ======================================================== 
+  * ERROR HANDLING FOR NO ADMIN ACCESS
+  * ======================================================== */
   if (!isAdmin) {
     return (
       <Layout>
@@ -35,6 +78,9 @@ export default function AdminDashboard() {
       </Layout>
     );
   }
+  /* ======================================================== 
+  * END OF ERROR HANDLING FOR NO ADMIN ACCESS
+  * ======================================================== */
 
   const activeLeagues = leagues.filter(l => l.status === 'active').length;
   const totalGames = games.length;

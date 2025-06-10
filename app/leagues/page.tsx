@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Layout } from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,7 +8,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useMockData } from '@/hooks/useMockData';
 import { 
   Trophy, 
   Users, 
@@ -19,9 +18,36 @@ import {
   MapPin,
   Star
 } from 'lucide-react';
+import { leagueService, teamService } from '@/services/supabaseService';
+import { League, Team } from '@/types';
 
 export default function LeaguesPage() {
-  const { leagues, teams } = useMockData();
+  /* ======================================================== 
+  * START OF FETCHING DATA FROM SUPABASE 
+  * ======================================================== */
+    const [leagues, setLeagues] = useState<League[]>([]);
+    const [teams, setTeams] = useState<Team[]>([]);
+  
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const leagues = await leagueService.getLeagues();
+          setLeagues(leagues);
+          
+          const teams = await teamService.getTeams();
+          setTeams(teams);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      };
+  
+      fetchData();
+    }, []);
+  
+    /* ======================================================== 
+    * END OF FETCHING DATA FROM SUPABASE 
+    * ======================================================== */
+
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [sportFilter, setSportFilter] = useState('all');
