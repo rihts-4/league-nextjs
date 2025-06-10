@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,7 +11,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useAuth } from '@/contexts/AuthContext';
-import { useMockData } from '@/hooks/useMockData';
 import { 
   Trophy, 
   Plus, 
@@ -22,40 +21,12 @@ import {
   Search,
   Eye
 } from 'lucide-react';
-import { League, Team } from '@/types';
-import { 
-  leagueService, 
-  teamService 
-} from '@/services/supabaseService';
+import useFetchData from '@/hooks/useFetchData';
 
 export default function AdminLeaguesPage() {
   const { isAdmin } = useAuth();
 
-  /* ======================================================== 
-  * START OF FETCHING DATA FROM SUPABASE 
-  * ======================================================== */
-  const [leagues, setLeagues] = useState<League[]>([]);
-  const [teams, setTeams] = useState<Team[]>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const leagues = await leagueService.getLeagues();
-        setLeagues(leagues);
-        
-        const teams = await teamService.getTeams();
-        setTeams(teams);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  /* ======================================================== 
-  * END OF FETCHING DATA FROM SUPABASE 
-  * ======================================================== */
+  const { leagues, teams, setLeagues } = useFetchData();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -22,45 +22,12 @@ import {
   Trophy,
   AlertTriangle
 } from 'lucide-react';
-import { 
-  leagueService, 
-  playerService, 
-  teamService 
-} from '@/services/supabaseService';
-import { League, Player, Team } from '@/types';
+import useFetchData from '@/hooks/useFetchData';
 
 export default function AdminPlayersPage() {
   const { isAdmin } = useAuth();
 
-  /* ======================================================== 
-  * START OF FETCHING DATA FROM SUPABASE 
-  * ======================================================== */
-  const [leagues, setLeagues] = useState<League[]>([]);
-  const [teams, setTeams] = useState<Team[]>([]);
-  const [players, setPlayers] = useState<Player[]>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const leagues = await leagueService.getLeagues();
-        setLeagues(leagues);
-        
-        const teams = await teamService.getTeams();
-        setTeams(teams);
-        
-        const players = await playerService.getPlayers();
-        setPlayers(players);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  /* ======================================================== 
-  * END OF FETCHING DATA FROM SUPABASE 
-  * ======================================================== */
+  const { leagues, teams, players, setPlayers } = useFetchData();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [teamFilter, setTeamFilter] = useState('all');

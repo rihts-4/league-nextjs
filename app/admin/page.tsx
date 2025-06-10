@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { League, Team, Player, Game } from '@/types';``
+import React from 'react';
 import { Layout } from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,49 +18,11 @@ import {
   Eye
 } from 'lucide-react';
 import Link from 'next/link';
-import { 
-  leagueService,
-  teamService,
-  playerService,
-  gameService
- } from '@/services/supabaseService';
+import useFetchData from '@/hooks/useFetchData';
 
 export default function AdminDashboard() {
   const { isAdmin } = useAuth();
-
-  /* ======================================================== 
-  * START OF FETCHING DATA FROM SUPABASE 
-  * ======================================================== */
-  const [leagues, setLeagues] = useState<League[]>([]);
-  const [teams, setTeams] = useState<Team[]>([]);
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [games, setGames] = useState<Game[]>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const leagues = await leagueService.getLeagues();
-        setLeagues(leagues);
-        
-        const teams = await teamService.getTeams();
-        setTeams(teams);
-        
-        const players = await playerService.getPlayers();
-        setPlayers(players);
-        
-        const games = await gameService.getGames();
-        setGames(games);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  /* ======================================================== 
-  * END OF FETCHING DATA FROM SUPABASE 
-  * ======================================================== */
+  const { leagues, teams, players, games } = useFetchData();
 
   /* ======================================================== 
   * ERROR HANDLING FOR NO ADMIN ACCESS
