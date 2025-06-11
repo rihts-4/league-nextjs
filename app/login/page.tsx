@@ -26,6 +26,20 @@ export default function LoginPage() {
   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    setLoading(true);
+    try{
+      const { error } = await signIn(email, password);
+        if (error) {
+          setError(error.message || 'Invalid email or password');
+        } else {
+          router.push('/admin');
+        }
+    } catch (err) {
+      setError('An unexpected error occurred');
+    } finally {
+      setLoading(false);
+    }
     /*
   * ======================================================== 
   * START OF LOGIN AND REGISTER FUNCTIONALITY 
@@ -68,18 +82,6 @@ export default function LoginPage() {
   * END OF LOGIN AND REGISTER FUNCTIONALITY, the bottom is only for admin
   * ======================================================== 
   */
-    try{
-      const { error } = await signIn(email, password);
-        if (error) {
-          setError(error.message || 'Invalid email or password');
-        } else {
-          router.push('/');
-        }
-    } catch (err) {
-      setError('An unexpected error occurred');
-    } finally {
-      setLoading(false);
-    }
   };
 
   /*
@@ -95,6 +97,8 @@ export default function LoginPage() {
       const { error } = await signInWithGoogle();
       if (error) {
         setError(error.message || 'Failed to sign in with Google');
+      } else {
+        router.push('/');
       }
     } catch (err) {
       setError('An unexpected error occurred');
