@@ -1,11 +1,3 @@
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string; //'admin' | 'user'
-  avatar?: string;
-}
-
 export interface League {
   id: string;
   name: string;
@@ -59,12 +51,4 @@ export interface Game {
   venue: string;
   status: string; //'scheduled' | 'live' | 'completed' | 'cancelled'
   week: number;
-}
-
-export interface AuthContextType {
-  user: User | null;
-  isAdmin: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
-  loading: boolean;
 }

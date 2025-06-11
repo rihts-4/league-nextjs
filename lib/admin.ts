@@ -1,0 +1,1 @@
+export const adminEmails = process.env.NEXT_PUBLIC_ADMIN_EMAIL!

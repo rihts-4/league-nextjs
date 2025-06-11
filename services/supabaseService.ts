@@ -1,28 +1,5 @@
 import { supabase } from '../lib/supabase';
-import type { User, League, Team, Player, Game } from '../types';
-
-// User operations
-export const userService = {
-  async createUser(user: Omit<User, 'id'>) {
-    const { data, error } = await supabase
-      .from('users')
-      .insert([user])
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
-  },
-
-  async getUser(id: string) {
-    const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', id)
-      .single();
-    if (error) throw error;
-    return data;
-  }
-};
+import type { League, Team, Player, Game } from '../types';
 
 // League operations
 export const leagueService = {
