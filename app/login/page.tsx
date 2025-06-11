@@ -15,7 +15,7 @@ export default function LoginPage() {
   // const [rememberMe, setRememberMe] = useState(false); THIS IS FOR REMEMBER ME FUNCTIONALITY
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signInWithGoogle, session, user } = useAuth();
+  const { signInWithGoogle, signIn } = useAuth();
   const router = useRouter();
   const showPwIcon = <Image src={showPassword ? '/icons/show_pw.png' : '/icons/hide_pw.png'} alt="show password" width={24} height={24} />
 
@@ -28,21 +28,19 @@ export default function LoginPage() {
     e.preventDefault();
     const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement;
     if(submitter?.name === 'login') {
-
+      setError('');
+      setLoading(true);
+      try {
+        await signIn(email, password);
+        router.push('/');
+      } catch (err) {
+        setError('Invalid email or password');
+      } finally {
+        setLoading(false);
+      }
     } else if(submitter?.name === 'register') {
 
     }
-    // setError('');
-    // setLoading(true);
-
-    // try {
-    //   await login(email, password);
-    //   router.push('/');
-    // } catch (err) {
-    //   setError('Invalid email or password');
-    // } finally {
-    //   setLoading(false);
-    // }
   };
 
   /*

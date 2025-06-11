@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 
 export function Navigation() {
-  const { user, isAdmin, logout } = useAuth();
+  const { user, signOut} = useAuth();
 
   const navItems = [
     { href: '/', label: 'Home', icon: Home },
@@ -54,7 +54,7 @@ export function Navigation() {
                 </Link>
               ))}
               
-              {isAdmin && (
+              {/* {isAdmin && (
                 <div className="flex space-x-4 border-l pl-4">
                   {adminNavItems.map((item) => (
                     <Link
@@ -67,7 +67,7 @@ export function Navigation() {
                     </Link>
                   ))}
                 </div>
-              )}
+              )} */}
             </div>
           </div>
 
@@ -75,17 +75,17 @@ export function Navigation() {
             {user ? (
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-700">
-                  Welcome, {user.name}
+                  Welcome, {user.email}
                 </span>
-                {isAdmin && (
+                {/* {isAdmin && (
                   <span className="px-2 py-1 text-xs font-medium bg-orange-100 text-orange-800 rounded-full">
                     Admin
                   </span>
-                )}
+                )} */}
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={logout}
+                  onClick={signOut}
                   className="flex items-center space-x-1"
                 >
                   <LogOut className="h-4 w-4" />
