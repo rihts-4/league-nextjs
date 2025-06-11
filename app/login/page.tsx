@@ -26,20 +26,59 @@ export default function LoginPage() {
   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement;
-    if(submitter?.name === 'login') {
-      setError('');
-      setLoading(true);
-      try {
-        await signIn(email, password);
-        router.push('/');
-      } catch (err) {
-        setError('Invalid email or password');
-      } finally {
-        setLoading(false);
-      }
-    } else if(submitter?.name === 'register') {
-
+    /*
+  * ======================================================== 
+  * START OF LOGIN AND REGISTER FUNCTIONALITY 
+  * ======================================================== 
+  */
+    // const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement;
+    // if(submitter?.name === 'login') {
+    //   setError('');
+    //   setLoading(true);
+    //   try {
+    //     const { error } = await signIn(email, password);
+    //     if (error) {
+    //       setError(error.message || 'Invalid email or password');
+    //     } else {
+    //       router.push('/');
+    //     }
+    //   } catch (err) {
+    //     setError('An unexpected error occurred');
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // } else if(submitter?.name === 'register') {
+    //   setError('');
+    //   setLoading(true);
+    //   try {
+    //     const { error } = await signUp(email, password);
+    //     if (error) {
+    //       setError(error.message || 'Failed to register');
+    //     } else {
+    //       router.push('/');
+    //     }
+    //   } catch (err) {
+    //     setError('An unexpected error occurred');
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // }
+    /*
+  * ======================================================== 
+  * END OF LOGIN AND REGISTER FUNCTIONALITY, the bottom is only for admin
+  * ======================================================== 
+  */
+    try{
+      const { error } = await signIn(email, password);
+        if (error) {
+          setError(error.message || 'Invalid email or password');
+        } else {
+          router.push('/');
+        }
+    } catch (err) {
+      setError('An unexpected error occurred');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -53,9 +92,12 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await signInWithGoogle();
-    } catch (error) {
-      setError('Failed to sign in with Google');
+      const { error } = await signInWithGoogle();
+      if (error) {
+        setError(error.message || 'Failed to sign in with Google');
+      }
+    } catch (err) {
+      setError('An unexpected error occurred');
     } finally {
       setLoading(false);
     }
@@ -77,11 +119,11 @@ export default function LoginPage() {
             <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center mb-4">
               <Image src="https://picsum.photos/id/22/48" className='rounded-full' alt="logo" width={48} height={48} />
             </div>
-            <h1 className="text-2xl font-bold mb-1">Welcome back!</h1>
-            <p className="text-gray-500 text-sm">
+            <h1 className="text-2xl font-bold mb-1">Welcome!</h1>
+            {/* <p className="text-gray-500 text-sm">
               Don&apos;t have an account yet?{' '}
               <a href="#" className="text-blue-600 hover:underline font-medium">Sign up now</a>
-            </p>
+            </p> */}
           </div>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
@@ -133,14 +175,18 @@ export default function LoginPage() {
               </label>
             </div> */}
             {error && (
-              <div className="text-red-600 text-sm text-center">{error}</div>
+              <div className="w-full bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-2 text-center">
+                {error}
+              </div>
             )}
               <Button type="submit" name="login" className="w-full" disabled={loading}>
                 {loading ? 'Logging in...' : 'Log in'}
               </Button>
+              {/* REGISTER FUNCTIONALITY
               <Button type="submit" name="register" className="w-full" variant="outline">
                 Register
               </Button>
+              */}
             <div className="flex items-center my-4">
               <div className="flex-grow border-t border-gray-200"></div>
               <span className="mx-2 text-gray-400 text-xs">OR</span>
