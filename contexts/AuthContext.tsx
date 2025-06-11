@@ -120,7 +120,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const isAdmin = adminEmails.includes(user?.email!);
+  const isAdmin = adminEmails?.includes(user?.email!);
 
   return (
     <AuthContext.Provider value={{ 
