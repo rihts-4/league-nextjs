@@ -41,6 +41,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         //   // Assign 'viewer' role if user is authenticated
         if (session?.user) {
+          if (adminEmails.includes(session.user.email!)) {
+            const { data: role, error: roleError } = await supabase
+            .from('roles')
+            .select('id')
+            .eq('name', 'admin')
+            .single();
+
+            if (!roleError && role?.id) {
+              // 2. Upsert into user_roles
+              await supabase
+                .from('user_roles')
+                .upsert(
+                  [{ user_id: session.user.id, role_id: role.id }],
+                  { onConflict: 'user_id,role_id' }
+                );
+            }
+          }
           // 1. Get the 'viewer' role ID
           const { data: role, error: roleError } = await supabase
             .from('roles')
@@ -48,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             .eq('name', 'viewer')
             .single();
 
-          if (!roleError && role?.id && !adminEmails.includes(session.user.email!)) {
+          if (!roleError && role?.id) {
             // 2. Upsert into user_roles
             await supabase
               .from('user_roles')
