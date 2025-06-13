@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,7 +22,6 @@ import {
   CheckCircle,
   Pause,
   Trophy,
-  Users
 } from 'lucide-react';
 import useFetchData from '@/hooks/useFetchData';
 
@@ -37,11 +36,11 @@ export default function AdminGamesPage() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedGame, setSelectedGame] = useState<any>(null);
   const [formData, setFormData] = useState({
-    leagueId: '',
-    homeTeamId: '',
-    awayTeamId: '',
-    homeScore: 0,
-    awayScore: 0,
+    league_id: '',
+    home_team_id: '',
+    away_team_id: '',
+    home_score: 0,
+    away_score: 0,
     date: '',
     time: '',
     venue: '',
@@ -63,9 +62,9 @@ export default function AdminGamesPage() {
   }
 
   const filteredGames = games.filter(game => {
-    const homeTeam = teams.find(t => t.id === game.homeTeamId);
-    const awayTeam = teams.find(t => t.id === game.awayTeamId);
-    const league = leagues.find(l => l.id === game.leagueId);
+    const homeTeam = teams.find(t => t.id === game.home_team_id);
+    const awayTeam = teams.find(t => t.id === game.away_team_id);
+    const league = leagues.find(l => l.id === game.league_id);
     
     const matchesSearch = 
       homeTeam?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -114,11 +113,11 @@ export default function AdminGamesPage() {
 
   const resetForm = () => {
     setFormData({
-      leagueId: '',
-      homeTeamId: '',
-      awayTeamId: '',
-      homeScore: 0,
-      awayScore: 0,
+      league_id: '',
+      home_team_id: '',
+      away_team_id: '',
+      home_score: 0,
+      away_score: 0,
       date: '',
       time: '',
       venue: '',
@@ -160,11 +159,11 @@ export default function AdminGamesPage() {
   const openEditDialog = (game: any) => {
     setSelectedGame(game);
     setFormData({
-      leagueId: game.leagueId,
-      homeTeamId: game.homeTeamId,
-      awayTeamId: game.awayTeamId,
-      homeScore: game.homeScore,
-      awayScore: game.awayScore,
+      league_id: game.league_id,
+      home_team_id: game.home_team_id,
+      away_team_id: game.away_team_id,
+      home_score: game.home_score,
+      away_score: game.away_score,
       date: game.date,
       time: game.time,
       venue: game.venue,
@@ -175,7 +174,7 @@ export default function AdminGamesPage() {
   };
 
   const getTeamsForLeague = (leagueId: string) => {
-    return teams.filter(team => team.leagueId === leagueId);
+    return teams.filter(team => team.league_id === leagueId);
   };
 
   return (
@@ -205,7 +204,7 @@ export default function AdminGamesPage() {
                 <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto">
                   <div className="grid gap-2">
                     <Label htmlFor="league">League</Label>
-                    <Select value={formData.leagueId} onValueChange={(value) => setFormData({...formData, leagueId: value, homeTeamId: '', awayTeamId: ''})}>
+                    <Select value={formData.league_id} onValueChange={(value) => setFormData({...formData, league_id: value, home_team_id: '', away_team_id: ''})}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select league" />
                       </SelectTrigger>
@@ -219,12 +218,12 @@ export default function AdminGamesPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="grid gap-2">
                       <Label htmlFor="homeTeam">Home Team</Label>
-                      <Select value={formData.homeTeamId} onValueChange={(value) => setFormData({...formData, homeTeamId: value})}>
+                      <Select value={formData.home_team_id} onValueChange={(value) => setFormData({...formData, home_team_id: value})}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select home team" />
                         </SelectTrigger>
                         <SelectContent>
-                          {getTeamsForLeague(formData.leagueId).map(team => (
+                          {getTeamsForLeague(formData.league_id).map(team => (
                             <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>
                           ))}
                         </SelectContent>
@@ -232,12 +231,12 @@ export default function AdminGamesPage() {
                     </div>
                     <div className="grid gap-2">
                       <Label htmlFor="awayTeam">Away Team</Label>
-                      <Select value={formData.awayTeamId} onValueChange={(value) => setFormData({...formData, awayTeamId: value})}>
+                      <Select value={formData.away_team_id} onValueChange={(value) => setFormData({...formData, away_team_id: value})}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select away team" />
                         </SelectTrigger>
                         <SelectContent>
-                          {getTeamsForLeague(formData.leagueId).filter(team => team.id !== formData.homeTeamId).map(team => (
+                          {getTeamsForLeague(formData.league_id).filter(team => team.id !== formData.home_team_id).map(team => (
                             <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>
                           ))}
                         </SelectContent>
@@ -306,8 +305,8 @@ export default function AdminGamesPage() {
                         <Input
                           id="homeScore"
                           type="number"
-                          value={formData.homeScore}
-                          onChange={(e) => setFormData({...formData, homeScore: parseInt(e.target.value) || 0})}
+                          value={formData.home_score}
+                          onChange={(e) => setFormData({...formData, home_score: parseInt(e.target.value) || 0})}
                           min="0"
                         />
                       </div>
@@ -316,8 +315,8 @@ export default function AdminGamesPage() {
                         <Input
                           id="awayScore"
                           type="number"
-                          value={formData.awayScore}
-                          onChange={(e) => setFormData({...formData, awayScore: parseInt(e.target.value) || 0})}
+                          value={formData.away_score}
+                          onChange={(e) => setFormData({...formData, away_score: parseInt(e.target.value) || 0})}
                           min="0"
                         />
                       </div>
@@ -376,21 +375,21 @@ export default function AdminGamesPage() {
                           <span className="ml-1 capitalize">{game.status}</span>
                         </Badge>
                         <Badge variant="outline">
-                          {getLeagueName(game.leagueId)}
+                          {getLeagueName(game.league_id)}
                         </Badge>
                         <div className="text-sm text-gray-500">Week {game.week}</div>
                       </div>
                       
                       <div className="flex items-center justify-between max-w-md">
                         <div className="text-center">
-                          <div className="font-semibold text-lg">{getTeamName(game.homeTeamId)}</div>
+                          <div className="font-semibold text-lg">{getTeamName(game.home_team_id)}</div>
                           <div className="text-sm text-gray-500">Home</div>
                         </div>
                         
                         <div className="text-center px-4">
                           {game.status === 'completed' || game.status === 'live' ? (
                             <div className={`text-2xl font-bold ${game.status === 'live' ? 'text-green-600' : 'text-gray-900'}`}>
-                              {game.homeScore} - {game.awayScore}
+                              {game.home_score} - {game.away_score}
                               {game.status === 'live' && (
                                 <div className="text-xs text-green-600 animate-pulse">LIVE</div>
                               )}
@@ -401,7 +400,7 @@ export default function AdminGamesPage() {
                         </div>
                         
                         <div className="text-center">
-                          <div className="font-semibold text-lg">{getTeamName(game.awayTeamId)}</div>
+                          <div className="font-semibold text-lg">{getTeamName(game.away_team_id)}</div>
                           <div className="text-sm text-gray-500">Away</div>
                         </div>
                       </div>
@@ -461,7 +460,7 @@ export default function AdminGamesPage() {
               <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto">
                 <div className="grid gap-2">
                   <Label htmlFor="edit-league">League</Label>
-                  <Select value={formData.leagueId} onValueChange={(value) => setFormData({...formData, leagueId: value, homeTeamId: '', awayTeamId: ''})}>
+                  <Select value={formData.league_id} onValueChange={(value) => setFormData({...formData, league_id: value, home_team_id: '', away_team_id: ''})}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select league" />
                     </SelectTrigger>
@@ -475,12 +474,12 @@ export default function AdminGamesPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="edit-homeTeam">Home Team</Label>
-                    <Select value={formData.homeTeamId} onValueChange={(value) => setFormData({...formData, homeTeamId: value})}>
+                    <Select value={formData.home_team_id} onValueChange={(value) => setFormData({...formData, home_team_id: value})}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select home team" />
                       </SelectTrigger>
                       <SelectContent>
-                        {getTeamsForLeague(formData.leagueId).map(team => (
+                        {getTeamsForLeague(formData.league_id).map(team => (
                           <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>
                         ))}
                       </SelectContent>
@@ -488,12 +487,12 @@ export default function AdminGamesPage() {
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="edit-awayTeam">Away Team</Label>
-                    <Select value={formData.awayTeamId} onValueChange={(value) => setFormData({...formData, awayTeamId: value})}>
+                    <Select value={formData.away_team_id} onValueChange={(value) => setFormData({...formData, away_team_id: value})}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select away team" />
                       </SelectTrigger>
                       <SelectContent>
-                        {getTeamsForLeague(formData.leagueId).filter(team => team.id !== formData.homeTeamId).map(team => (
+                        {getTeamsForLeague(formData.league_id).filter(team => team.id !== formData.home_team_id).map(team => (
                           <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>
                         ))}
                       </SelectContent>
@@ -562,8 +561,8 @@ export default function AdminGamesPage() {
                       <Input
                         id="edit-homeScore"
                         type="number"
-                        value={formData.homeScore}
-                        onChange={(e) => setFormData({...formData, homeScore: parseInt(e.target.value) || 0})}
+                        value={formData.home_score}
+                        onChange={(e) => setFormData({...formData, home_score: parseInt(e.target.value) || 0})}
                         min="0"
                       />
                     </div>
@@ -572,8 +571,8 @@ export default function AdminGamesPage() {
                       <Input
                         id="edit-awayScore"
                         type="number"
-                        value={formData.awayScore}
-                        onChange={(e) => setFormData({...formData, awayScore: parseInt(e.target.value) || 0})}
+                        value={formData.away_score}
+                        onChange={(e) => setFormData({...formData, away_score: parseInt(e.target.value) || 0})}
                         min="0"
                       />
                     </div>

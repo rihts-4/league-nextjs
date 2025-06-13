@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { Layout } from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,16 +9,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
-  Users, 
-  Trophy, 
-  Target, 
+  Users,
   Search,
-  Filter,
   ArrowRight,
   MapPin,
-  User,
   TrendingUp,
-  Medal
+  Medal,
+  Trophy
 } from 'lucide-react';
 import useFetchData from '@/hooks/useFetchData';
 
@@ -26,19 +23,23 @@ export default function TeamsPage() {
   const { leagues, teams, players } = useFetchData();
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [leagueFilter, setLeagueFilter] = useState('all');
   const [sortBy, setSortBy] = useState('points');
 
-  const filteredAndSortedTeams = teams
-    .filter(team => {
-      const matchesSearch = team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           team.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           team.coach.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesLeague = leagueFilter === 'all' || team.leagueId === leagueFilter;
-      
-      return matchesSearch && matchesLeague;
-    })
-    .sort((a, b) => {
+  /*
+  * ======================================================== 
+  * START OF SEARCH AND FILTER FUNCTIONALITY 
+  * ======================================================== 
+  */
+
+  const filteredTeams = teams.filter(team => {
+    const matchesSearch = team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         team.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         team.coach.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesSearch;
+  });
+
+  const sortTeams = (teamsToSort: any[]) => {
+    return teamsToSort.sort((a, b) => {
       switch (sortBy) {
         case 'points':
           return b.points - a.points;
@@ -47,18 +48,36 @@ export default function TeamsPage() {
         case 'name':
           return a.name.localeCompare(b.name);
         case 'goals':
-          return b.goalsFor - a.goalsFor;
+          return b.goals_for - a.goals_for;
         default:
           return 0;
       }
     });
-
-  const getLeagueName = (leagueId: string) => {
-    return leagues.find(league => league.id === leagueId)?.name || 'Unknown League';
   };
 
+  // Group teams by league
+  const teamsByLeague = leagues.map(league => {
+    const leagueTeams = filteredTeams.filter(team => team.league_id === league.id);
+    return {
+      league,
+      teams: sortTeams(leagueTeams)
+    };
+  }).filter(group => group.teams.length > 0);
+
+  /*
+  * ======================================================== 
+  * END OF SEARCH AND FILTER FUNCTIONALITY 
+  * ======================================================== 
+  */
+
+  /*
+  * ======================================================== 
+  * START OF GET TEAM PLAYER COUNT AND WIN PERCENTAGE FUNCTIONALITY 
+  * ======================================================== 
+  */
+
   const getTeamPlayerCount = (teamId: string) => {
-    return players.filter(player => player.teamId === teamId).length;
+    return players.filter(player => player.team_id === teamId).length;
   };
 
   const getWinPercentage = (team: any) => {
@@ -66,20 +85,31 @@ export default function TeamsPage() {
     return totalGames > 0 ? ((team.wins / totalGames) * 100).toFixed(1) : '0.0';
   };
 
+  /*
+  * ======================================================== 
+  * END OF GET TEAM PLAYER COUNT AND WIN PERCENTAGE FUNCTIONALITY 
+  * ======================================================== 
+  */
+
+  const getLeagueTeamRank = (teams: any[], teamId: string) => {
+    const sortedTeams = [...teams].sort((a, b) => b.points - a.points);
+    return sortedTeams.findIndex(team => team.id === teamId) + 1;
+  };
+
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Teams</h1>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">Teams by League</h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Explore all teams across different leagues. Discover team statistics, rosters, 
-              and performance metrics from your favorite sports organizations.
+              Explore teams organized by their respective leagues. Compare performance metrics 
+              and discover standout teams across different sports organizations.
             </p>
           </div>
 
-          {/* Search and Filters */}
+          {/* Search and Sort Controls */}
           <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
             <div className="flex flex-col lg:flex-row gap-4 items-center">
               <div className="relative flex-1">
@@ -91,19 +121,7 @@ export default function TeamsPage() {
                   className="pl-10"
                 />
               </div>
-              <div className="flex gap-4 flex-wrap">
-                <Select value={leagueFilter} onValueChange={setLeagueFilter}>
-                  <SelectTrigger className="w-[180px]">
-                    <Filter className="h-4 w-4 mr-2" />
-                    <SelectValue placeholder="All Leagues" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Leagues</SelectItem>
-                    {leagues.map(league => (
-                      <SelectItem key={league.id} value={league.id}>{league.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="flex gap-4">
                 <Select value={sortBy} onValueChange={setSortBy}>
                   <SelectTrigger className="w-[150px]">
                     <TrendingUp className="h-4 w-4 mr-2" />
@@ -120,87 +138,112 @@ export default function TeamsPage() {
             </div>
           </div>
 
-          {/* Teams Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredAndSortedTeams.map((team, index) => (
-              <Card key={team.id} className="hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
-                <CardHeader>
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex items-center space-x-2">
-                      {index < 3 && (
-                        <Badge className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-900">
-                          <Medal className="h-3 w-3 mr-1" />
-                          #{index + 1}
-                        </Badge>
-                      )}
-                      <Badge variant="outline">
-                        {getLeagueName(team.leagueId)}
+          {/* Teams by League Columns */}
+          {teamsByLeague.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+              {teamsByLeague.map(({ league, teams }) => (
+                <div key={league.id} className="space-y-6">
+                  {/* League Header */}
+                  <div className="bg-white rounded-lg shadow-sm border p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="bg-blue-100 p-2 rounded-lg">
+                          <Trophy className="h-6 w-6 text-blue-600" />
+                        </div>
+                        <div>
+                          <h2 className="text-xl font-bold text-gray-900">{league.name}</h2>
+                          <p className="text-sm text-gray-500">{teams.length} teams</p>
+                        </div>
+                      </div>
+                      <Badge variant="outline" className="text-lg px-3 py-1">
+                        {league.sport}
                       </Badge>
                     </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-blue-600">{team.points}</div>
-                      <div className="text-xs text-gray-500">points</div>
-                    </div>
                   </div>
-                  <CardTitle className="text-xl">{team.name}</CardTitle>
-                  <CardDescription>
-                    <div className="flex items-center text-gray-600">
-                      <MapPin className="h-4 w-4 mr-1" />
-                      {team.city}
-                    </div>
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
+
+                  {/* Teams in this League */}
                   <div className="space-y-4">
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-3 gap-4 text-center">
-                      <div className="bg-green-50 p-3 rounded-lg">
-                        <div className="text-lg font-bold text-green-600">{team.wins}</div>
-                        <div className="text-xs text-gray-500">Wins</div>
-                      </div>
-                      <div className="bg-red-50 p-3 rounded-lg">
-                        <div className="text-lg font-bold text-red-600">{team.losses}</div>
-                        <div className="text-xs text-gray-500">Losses</div>
-                      </div>
-                      <div className="bg-yellow-50 p-3 rounded-lg">
-                        <div className="text-lg font-bold text-yellow-600">{team.draws}</div>
-                        <div className="text-xs text-gray-500">Draws</div>
-                      </div>
-                    </div>
+                    {teams.map((team) => {
+                      const rank = getLeagueTeamRank(teams, team.id);
+                      return (
+                        <Card key={team.id} className="hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+                          <CardHeader className="pb-3">
+                            <div className="flex justify-between items-start mb-2">
+                              <div className="flex items-center space-x-2">
+                                {rank <= 3 && (
+                                  <Badge className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-900">
+                                    <Medal className="h-3 w-3 mr-1" />
+                                    #{rank}
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="text-right">
+                                <div className="text-2xl font-bold text-blue-600">{team.points}</div>
+                                <div className="text-xs text-gray-500">points</div>
+                              </div>
+                            </div>
+                            <CardTitle className="text-lg">{team.name}</CardTitle>
+                            <CardDescription>
+                              <div className="flex items-center text-gray-600">
+                                <MapPin className="h-4 w-4 mr-1" />
+                                {team.city}
+                              </div>
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-3">
+                              {/* Stats Grid */}
+                              <div className="grid grid-cols-3 gap-2 text-center">
+                                <div className="bg-green-50 p-2 rounded">
+                                  <div className="text-sm font-bold text-green-600">{team.wins}</div>
+                                  <div className="text-xs text-gray-500">Wins</div>
+                                </div>
+                                <div className="bg-red-50 p-2 rounded">
+                                  <div className="text-sm font-bold text-red-600">{team.losses}</div>
+                                  <div className="text-xs text-gray-500">Losses</div>
+                                </div>
+                                <div className="bg-yellow-50 p-2 rounded">
+                                  <div className="text-sm font-bold text-yellow-600">{team.draws}</div>
+                                  <div className="text-xs text-gray-500">Draws</div>
+                                </div>
+                              </div>
 
-                    {/* Additional Stats */}
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-600">Win Rate</span>
-                        <span className="font-medium">{getWinPercentage(team)}%</span>
-                      </div>
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-600">Goals</span>
-                        <span className="font-medium">{team.goalsFor} - {team.goalsAgainst}</span>
-                      </div>
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-600">Coach</span>
-                        <span className="font-medium">{team.coach}</span>
-                      </div>
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-600">Players</span>
-                        <span className="font-medium">{getTeamPlayerCount(team.id)}</span>
-                      </div>
-                    </div>
+                              {/* Additional Stats */}
+                              <div className="space-y-1 text-xs">
+                                <div className="flex justify-between">
+                                  <span className="text-gray-600">Win Rate</span>
+                                  <span className="font-medium">{getWinPercentage(team)}%</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-600">Goals</span>
+                                  <span className="font-medium">{team.goals_for} - {team.goals_against}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-600">Coach</span>
+                                  <span className="font-medium truncate ml-2">{team.coach}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-600">Players</span>
+                                  <span className="font-medium">{getTeamPlayerCount(team.id)}</span>
+                                </div>
+                              </div>
 
-                    <Link href={`/teams/${team.id}`}>
-                      <Button className="w-full group">
-                        View Team Details
-                        <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                      </Button>
-                    </Link>
+                              <Link href={`/teams/${team.id}`}>
+                                <Button size="sm" className="w-full group mt-2">
+                                  View Details
+                                  <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                                </Button>
+                              </Link>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {filteredAndSortedTeams.length === 0 && (
+                </div>
+              ))}
+            </div>
+          ) : (
             <div className="text-center py-12">
               <Users className="h-12 w-12 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No teams found</h3>

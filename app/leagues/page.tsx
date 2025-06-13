@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { Layout } from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,38 +15,12 @@ import {
   Search,
   Filter,
   ArrowRight,
-  MapPin,
   Star
 } from 'lucide-react';
-import { leagueService, teamService } from '@/services/supabaseService';
-import { League, Team } from '@/types';
+import useFetchData from '@/hooks/useFetchData';
 
 export default function LeaguesPage() {
-  /* ======================================================== 
-  * START OF FETCHING DATA FROM SUPABASE 
-  * ======================================================== */
-    const [leagues, setLeagues] = useState<League[]>([]);
-    const [teams, setTeams] = useState<Team[]>([]);
-  
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const leagues = await leagueService.getLeagues();
-          setLeagues(leagues);
-          
-          const teams = await teamService.getTeams();
-          setTeams(teams);
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      };
-  
-      fetchData();
-    }, []);
-  
-    /* ======================================================== 
-    * END OF FETCHING DATA FROM SUPABASE 
-    * ======================================================== */
+  const { teams, leagues } = useFetchData();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -62,7 +36,7 @@ export default function LeaguesPage() {
   });
 
   const getLeagueTeamCount = (leagueId: string) => {
-    return teams.filter(team => team.leagueId === leagueId).length;
+    return teams.filter(team => team.league_id === leagueId).length;
   };
 
   const sports = Array.from(new Set(leagues.map(league => league.sport)));
@@ -202,10 +176,10 @@ export default function LeaguesPage() {
                     </div>
                     <div className="flex items-center text-sm text-gray-600">
                       <Calendar className="h-4 w-4 mr-1" />
-                      {new Date(league.startDate).toLocaleDateString()} - {new Date(league.endDate).toLocaleDateString()}
+                      {new Date(league.start_date).toLocaleDateString()} - {new Date(league.end_date).toLocaleDateString()}
                     </div>
                     <Link href={`/leagues/${league.id}`}>
-                      <Button className="w-full group">
+                      <Button className="w-full group mt-3">
                         View League
                         <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                       </Button>
@@ -216,7 +190,7 @@ export default function LeaguesPage() {
             ))}
           </div>
 
-          {filteredLeagues.length === 0 && (
+          {leagues.length === 0 && (
             <div className="text-center py-12">
               <Trophy className="h-12 w-12 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No leagues found</h3>

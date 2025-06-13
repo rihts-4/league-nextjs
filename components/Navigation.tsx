@@ -14,6 +14,7 @@ import {
   Home,
   Menu,
   X,
+  ChevronDownIcon,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -75,6 +76,7 @@ export function Navigation() {
                     >
                       <Shield className="h-4 w-4" />
                       <span>Admin</span>
+                      <ChevronDownIcon className="h-4 w-4 text-muted-foreground text-orange-700 hover:text-orange-600 hover:bg-orange-50 transition-colors" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start">

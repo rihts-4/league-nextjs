@@ -16,11 +16,7 @@ import {
   Edit, 
   Trash2, 
   Users, 
-  Target,
-  Search,
-  User,
-  Trophy,
-  AlertTriangle
+  Search
 } from 'lucide-react';
 import useFetchData from '@/hooks/useFetchData';
 
@@ -36,14 +32,14 @@ export default function AdminPlayersPage() {
   const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
   const [formData, setFormData] = useState({
     name: '',
-    teamId: '',
+    team_id: '',
     position: '',
     age: 0,
-    jerseyNumber: 0,
+    jersey_number: 0,
     goals: 0,
     assists: 0,
-    yellowCards: 0,
-    redCards: 0
+    yellow_cards: 0,
+    red_cards: 0
   });
 
   if (!isAdmin) {
@@ -62,7 +58,7 @@ export default function AdminPlayersPage() {
   const filteredPlayers = players.filter(player => {
     const matchesSearch = player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          player.position.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesTeam = teamFilter === 'all' || player.teamId === teamFilter;
+    const matchesTeam = teamFilter === 'all' || player.team_id === teamFilter;
     
     return matchesSearch && matchesTeam;
   });
@@ -73,20 +69,20 @@ export default function AdminPlayersPage() {
 
   const getLeagueFromTeam = (teamId: string) => {
     const team = teams.find(t => t.id === teamId);
-    return team ? leagues.find(l => l.id === team.leagueId)?.name || 'Unknown' : 'Unknown';
+    return team ? leagues.find(l => l.id === team.league_id)?.name || 'Unknown' : 'Unknown';
   };
 
   const resetForm = () => {
     setFormData({
       name: '',
-      teamId: '',
+      team_id: '',
       position: '',
       age: 0,
-      jerseyNumber: 0,
+      jersey_number: 0,
       goals: 0,
       assists: 0,
-      yellowCards: 0,
-      redCards: 0
+      yellow_cards: 0,
+      red_cards: 0
     });
   };
 
@@ -124,14 +120,14 @@ export default function AdminPlayersPage() {
     setSelectedPlayer(player);
     setFormData({
       name: player.name,
-      teamId: player.teamId,
+      team_id: player.team_id,
       position: player.position,
       age: player.age,
-      jerseyNumber: player.jerseyNumber,
+      jersey_number: player.jersey_number,
       goals: player.goals,
       assists: player.assists,
-      yellowCards: player.yellowCards,
-      redCards: player.redCards
+      yellow_cards: player.yellow_cards,
+      red_cards: player.red_cards
     });
     setIsEditDialogOpen(true);
   };
@@ -187,7 +183,7 @@ export default function AdminPlayersPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="grid gap-2">
                       <Label htmlFor="team">Team</Label>
-                      <Select value={formData.teamId} onValueChange={(value) => setFormData({...formData, teamId: value})}>
+                      <Select value={formData.team_id} onValueChange={(value) => setFormData({...formData, team_id: value})}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select team" />
                         </SelectTrigger>
@@ -217,8 +213,8 @@ export default function AdminPlayersPage() {
                     <Input
                       id="jerseyNumber"
                       type="number"
-                      value={formData.jerseyNumber}
-                      onChange={(e) => setFormData({...formData, jerseyNumber: parseInt(e.target.value) || 0})}
+                      value={formData.jersey_number}
+                      onChange={(e) => setFormData({...formData, jersey_number: parseInt(e.target.value) || 0})}
                       placeholder="Jersey number"
                     />
                   </div>
@@ -248,8 +244,8 @@ export default function AdminPlayersPage() {
                       <Input
                         id="yellowCards"
                         type="number"
-                        value={formData.yellowCards}
-                        onChange={(e) => setFormData({...formData, yellowCards: parseInt(e.target.value) || 0})}
+                        value={formData.yellow_cards}
+                        onChange={(e) => setFormData({...formData, yellow_cards: parseInt(e.target.value) || 0})}
                       />
                     </div>
                     <div className="grid gap-2">
@@ -257,8 +253,8 @@ export default function AdminPlayersPage() {
                       <Input
                         id="redCards"
                         type="number"
-                        value={formData.redCards}
-                        onChange={(e) => setFormData({...formData, redCards: parseInt(e.target.value) || 0})}
+                        value={formData.red_cards}
+                        onChange={(e) => setFormData({...formData, red_cards: parseInt(e.target.value) || 0})}
                       />
                     </div>
                   </div>
@@ -310,7 +306,7 @@ export default function AdminPlayersPage() {
                       <CardTitle className="text-lg">{player.name}</CardTitle>
                       <CardDescription>
                         <Badge variant="outline" className="mt-1">
-                          #{player.jerseyNumber}
+                          #{player.jersey_number}
                         </Badge>
                       </CardDescription>
                     </div>
@@ -325,11 +321,11 @@ export default function AdminPlayersPage() {
                     <div className="text-sm">
                       <div className="flex justify-between mb-1">
                         <span className="text-gray-600">Team</span>
-                        <span className="font-medium">{getTeamName(player.teamId)}</span>
+                        <span className="font-medium">{getTeamName(player.team_id)}</span>
                       </div>
                       <div className="flex justify-between mb-1">
                         <span className="text-gray-600">League</span>
-                        <span className="font-medium text-xs">{getLeagueFromTeam(player.teamId)}</span>
+                        <span className="font-medium text-xs">{getLeagueFromTeam(player.team_id)}</span>
                       </div>
                     </div>
 
@@ -344,16 +340,16 @@ export default function AdminPlayersPage() {
                       </div>
                     </div>
 
-                    {(player.yellowCards > 0 || player.redCards > 0) && (
+                    {(player.yellow_cards > 0 || player.red_cards > 0) && (
                       <div className="flex justify-center gap-2">
-                        {player.yellowCards > 0 && (
+                        {player.yellow_cards > 0 && (
                           <Badge variant="outline" className="text-yellow-600 border-yellow-300">
-                            {player.yellowCards} Yellow
+                            {player.yellow_cards} Yellow
                           </Badge>
                         )}
-                        {player.redCards > 0 && (
+                        {player.red_cards > 0 && (
                           <Badge variant="outline" className="text-red-600 border-red-300">
-                            {player.redCards} Red
+                            {player.red_cards} Red
                           </Badge>
                         )}
                       </div>
@@ -417,7 +413,7 @@ export default function AdminPlayersPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="edit-team">Team</Label>
-                    <Select value={formData.teamId} onValueChange={(value) => setFormData({...formData, teamId: value})}>
+                    <Select value={formData.team_id} onValueChange={(value) => setFormData({...formData, team_id: value})}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select team" />
                       </SelectTrigger>
@@ -447,8 +443,8 @@ export default function AdminPlayersPage() {
                   <Input
                     id="edit-jerseyNumber"
                     type="number"
-                    value={formData.jerseyNumber}
-                    onChange={(e) => setFormData({...formData, jerseyNumber: parseInt(e.target.value) || 0})}
+                    value={formData.jersey_number}
+                    onChange={(e) => setFormData({...formData, jersey_number: parseInt(e.target.value) || 0})}
                     placeholder="Jersey number"
                   />
                 </div>
@@ -478,8 +474,8 @@ export default function AdminPlayersPage() {
                     <Input
                       id="edit-yellowCards"
                       type="number"
-                      value={formData.yellowCards}
-                      onChange={(e) => setFormData({...formData, yellowCards: parseInt(e.target.value) || 0})}
+                      value={formData.yellow_cards}
+                      onChange={(e) => setFormData({...formData, yellow_cards: parseInt(e.target.value) || 0})}
                     />
                   </div>
                   <div className="grid gap-2">
@@ -487,8 +483,8 @@ export default function AdminPlayersPage() {
                     <Input
                       id="edit-redCards"
                       type="number"
-                      value={formData.redCards}
-                      onChange={(e) => setFormData({...formData, redCards: parseInt(e.target.value) || 0})}
+                      value={formData.red_cards}
+                      onChange={(e) => setFormData({...formData, red_cards: parseInt(e.target.value) || 0})}
                     />
                   </div>
                 </div>

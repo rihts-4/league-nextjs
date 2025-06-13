@@ -2,9 +2,8 @@
 
 import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
@@ -17,7 +16,6 @@ import {
   CheckCircle,
   Pause,
   Trophy,
-  Users
 } from 'lucide-react';
 import useFetchData from '@/hooks/useFetchData';
 
@@ -29,9 +27,9 @@ export default function GamesPage() {
   const [leagueFilter, setLeagueFilter] = useState('all');
 
   const filteredGames = games.filter(game => {
-    const homeTeam = teams.find(t => t.id === game.homeTeamId);
-    const awayTeam = teams.find(t => t.id === game.awayTeamId);
-    const league = leagues.find(l => l.id === game.leagueId);
+    const homeTeam = teams.find(t => t.id === game.home_team_id);
+    const awayTeam = teams.find(t => t.id === game.away_team_id);
+    const league = leagues.find(l => l.id === game.league_id);
     
     const matchesSearch = 
       homeTeam?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -40,7 +38,7 @@ export default function GamesPage() {
       league?.name.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'all' || game.status === statusFilter;
-    const matchesLeague = leagueFilter === 'all' || game.leagueId === leagueFilter;
+    const matchesLeague = leagueFilter === 'all' || game.league_id === leagueFilter;
     
     return matchesSearch && matchesStatus && matchesLeague;
   });
@@ -200,25 +198,25 @@ export default function GamesPage() {
                           <span className="ml-1 capitalize">{game.status}</span>
                         </Badge>
                         <Badge variant="outline">
-                          {getLeagueName(game.leagueId)}
+                          {getLeagueName(game.league_id)}
                         </Badge>
                         <div className="text-sm text-gray-500">Week {game.week}</div>
                       </div>
                       
                       <div className="flex items-center justify-between max-w-md">
                         <div className="text-center">
-                          <div className="font-semibold text-lg">{getTeamName(game.homeTeamId)}</div>
+                          <div className="font-semibold text-lg">{getTeamName(game.home_team_id)}</div>
                           <div className="text-sm text-gray-500">Home</div>
                         </div>
                         
                         <div className="text-center px-4">
                           {game.status === 'completed' ? (
                             <div className="text-2xl font-bold text-gray-900">
-                              {game.homeScore} - {game.awayScore}
+                              {game.home_score} - {game.away_score}
                             </div>
                           ) : game.status === 'live' ? (
                             <div className="text-2xl font-bold text-green-600">
-                              {game.homeScore} - {game.awayScore}
+                              {game.home_score} - {game.away_score}
                               <div className="text-xs text-green-600 animate-pulse">LIVE</div>
                             </div>
                           ) : (
@@ -227,7 +225,7 @@ export default function GamesPage() {
                         </div>
                         
                         <div className="text-center">
-                          <div className="font-semibold text-lg">{getTeamName(game.awayTeamId)}</div>
+                          <div className="font-semibold text-lg">{getTeamName(game.away_team_id)}</div>
                           <div className="text-sm text-gray-500">Away</div>
                         </div>
                       </div>

@@ -4,16 +4,16 @@ export interface League {
   description: string;
   season: string;
   status: string; //'active' | 'inactive' | 'completed'
-  startDate: string;
-  endDate: string;
+  start_date: string;
+  end_date: string;
   sport: string;
-  createdAt: string;
+  created_at: string;
 }
 
 export interface Team {
   id: string;
   name: string;
-  leagueId: string;
+  league_id: string;
   coach: string;
   founded: string;
   city: string;
@@ -22,30 +22,30 @@ export interface Team {
   losses: number;
   draws: number;
   points: number;
-  goalsFor: number;
-  goalsAgainst: number;
+  goals_for: number;
+  goals_against: number;
 }
 
 export interface Player {
   id: string;
   name: string;
-  teamId: string;
+  team_id: string;
   position: string;
   age: number;
-  jerseyNumber: number;
+  jersey_number: number;
   goals: number;
   assists: number;
-  yellowCards: number;
-  redCards: number;
+  yellow_cards: number;
+  red_cards: number;
 }
 
 export interface Game {
   id: string;
-  leagueId: string;
-  homeTeamId: string;
-  awayTeamId: string;
-  homeScore: number;
-  awayScore: number;
+  league_id: string;
+  home_team_id: string;
+  away_team_id: string;
+  home_score: number;
+  away_score: number;
   date: string;
   time: string;
   venue: string;

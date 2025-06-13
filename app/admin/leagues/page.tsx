@@ -17,9 +17,7 @@ import {
   Edit, 
   Trash2, 
   Users, 
-  Calendar,
-  Search,
-  Eye
+  Search
 } from 'lucide-react';
 import useFetchData from '@/hooks/useFetchData';
 
@@ -37,8 +35,8 @@ export default function AdminLeaguesPage() {
     description: '',
     season: '',
     status: 'active',
-    startDate: '',
-    endDate: '',
+    start_date: '',
+    end_date: '',
     sport: ''
   });
 
@@ -61,7 +59,7 @@ export default function AdminLeaguesPage() {
   );
 
   const getLeagueTeamCount = (leagueId: string) => {
-    return teams.filter(team => team.leagueId === leagueId).length;
+    return teams.filter(team => team.league_id === leagueId).length;
   };
 
   const resetForm = () => {
@@ -70,8 +68,8 @@ export default function AdminLeaguesPage() {
       description: '',
       season: '',
       status: 'active',
-      startDate: '',
-      endDate: '',
+      start_date: '',
+      end_date: '',
       sport: ''
     });
   };
@@ -80,7 +78,7 @@ export default function AdminLeaguesPage() {
     const newLeague = {
       id: Date.now().toString(),
       ...formData,
-      createdAt: new Date().toISOString()
+      created_at: new Date().toISOString()
     };
     setLeagues([...leagues, newLeague]);
     setIsCreateDialogOpen(false);
@@ -114,8 +112,8 @@ export default function AdminLeaguesPage() {
       description: league.description,
       season: league.season,
       status: league.status,
-      startDate: league.startDate,
-      endDate: league.endDate,
+      start_date: league.start_date,
+      end_date: league.end_date,
       sport: league.sport
     });
     setIsEditDialogOpen(true);
@@ -192,8 +190,8 @@ export default function AdminLeaguesPage() {
                       <Input
                         id="startDate"
                         type="date"
-                        value={formData.startDate}
-                        onChange={(e) => setFormData({...formData, startDate: e.target.value})}
+                        value={formData.start_date}
+                        onChange={(e) => setFormData({...formData, start_date: e.target.value})}
                       />
                     </div>
                     <div className="grid gap-2">
@@ -201,8 +199,8 @@ export default function AdminLeaguesPage() {
                       <Input
                         id="endDate"
                         type="date"
-                        value={formData.endDate}
-                        onChange={(e) => setFormData({...formData, endDate: e.target.value})}
+                        value={formData.end_date}
+                        onChange={(e) => setFormData({...formData, end_date: e.target.value})}
                       />
                     </div>
                   </div>
@@ -351,8 +349,8 @@ export default function AdminLeaguesPage() {
                     <Input
                       id="edit-startDate"
                       type="date"
-                      value={formData.startDate}
-                      onChange={(e) => setFormData({...formData, startDate: e.target.value})}
+                      value={formData.start_date}
+                      onChange={(e) => setFormData({...formData, start_date: e.target.value})}
                     />
                   </div>
                   <div className="grid gap-2">
@@ -360,8 +358,8 @@ export default function AdminLeaguesPage() {
                     <Input
                       id="edit-endDate"
                       type="date"
-                      value={formData.endDate}
-                      onChange={(e) => setFormData({...formData, endDate: e.target.value})}
+                      value={formData.end_date}
+                      onChange={(e) => setFormData({...formData, end_date: e.target.value})}
                     />
                   </div>
                 </div>

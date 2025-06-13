@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { League, Team, Player, Game } from "@/types";
 import { 
     gameService, 
@@ -16,25 +16,25 @@ export default function useFetchData() {
     const [games, setGames] = useState<Game[]>([]);
 
     useEffect(() => {
-    const fetchData = async () => {
-        try {
-        const leagues = await leagueService.getLeagues();
-        setLeagues(leagues);
-        
-        const teams = await teamService.getTeams();
-        setTeams(teams);
-        
-        const players = await playerService.getPlayers();
-        setPlayers(players);
-        
-        const games = await gameService.getGames();
-        setGames(games);
-        } catch (error) {
-        console.error('Error fetching data:', error);
-        }
-    };
+        const fetchData = async () => {
+            try {
+                const leagues = await leagueService.getLeagues();
+                setLeagues(leagues);
+                
+                const teams = await teamService.getTeams();
+                setTeams(teams);
+                
+                const players = await playerService.getPlayers();
+                setPlayers(players);
+                
+                const games = await gameService.getGames();
+                setGames(games);
+            } catch (error) {
+                return error;
+            }
+        };
 
-    fetchData();
+        fetchData();
     }, []);
     return {
         leagues,

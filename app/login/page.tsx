@@ -1,5 +1,7 @@
 'use client';
 
+// Login page, MVP done, next is leagues page
+
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -42,7 +44,7 @@ export default function LoginPage() {
     }
     /*
   * ======================================================== 
-  * START OF LOGIN AND REGISTER FUNCTIONALITY 
+  * END` OF LOGIN AND REGISTER FUNCTIONALITY 
   * ======================================================== 
   */
     // const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement;
@@ -97,8 +99,6 @@ export default function LoginPage() {
       const { error } = await signInWithGoogle();
       if (error) {
         setError(error.message || 'Failed to sign in with Google');
-      } else {
-        router.push('/');
       }
     } catch (err) {
       setError('An unexpected error occurred');

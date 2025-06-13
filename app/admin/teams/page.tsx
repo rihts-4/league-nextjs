@@ -15,11 +15,8 @@ import {
   Plus, 
   Edit, 
   Trash2, 
-  Trophy, 
   MapPin,
   Search,
-  User,
-  Target
 } from 'lucide-react';
 import useFetchData from '@/hooks/useFetchData';
 
@@ -35,7 +32,7 @@ export default function AdminTeamsPage() {
   const [selectedTeam, setSelectedTeam] = useState<any>(null);
   const [formData, setFormData] = useState({
     name: '',
-    leagueId: '',
+    league_id: '',
     coach: '',
     founded: '',
     city: '',
@@ -43,8 +40,8 @@ export default function AdminTeamsPage() {
     losses: 0,
     draws: 0,
     points: 0,
-    goalsFor: 0,
-    goalsAgainst: 0
+    goals_for: 0,
+    goals_against: 0
   });
 
   if (!isAdmin) {
@@ -71,13 +68,13 @@ export default function AdminTeamsPage() {
   };
 
   const getTeamPlayerCount = (teamId: string) => {
-    return players.filter(player => player.teamId === teamId).length;
+    return players.filter(player => player.team_id === teamId).length;
   };
 
   const resetForm = () => {
     setFormData({
       name: '',
-      leagueId: '',
+      league_id: '',
       coach: '',
       founded: '',
       city: '',
@@ -85,8 +82,8 @@ export default function AdminTeamsPage() {
       losses: 0,
       draws: 0,
       points: 0,
-      goalsFor: 0,
-      goalsAgainst: 0
+      goals_for: 0,
+      goals_against: 0
     });
   };
 
@@ -124,7 +121,7 @@ export default function AdminTeamsPage() {
     setSelectedTeam(team);
     setFormData({
       name: team.name,
-      leagueId: team.leagueId,
+      league_id: team.league_id,
       coach: team.coach,
       founded: team.founded,
       city: team.city,
@@ -132,8 +129,8 @@ export default function AdminTeamsPage() {
       losses: team.losses,
       draws: team.draws,
       points: team.points,
-      goalsFor: team.goalsFor,
-      goalsAgainst: team.goalsAgainst
+      goals_for: team.goals_for,
+      goals_against: team.goals_against
     });
     setIsEditDialogOpen(true);
   };
@@ -186,7 +183,7 @@ export default function AdminTeamsPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="grid gap-2">
                       <Label htmlFor="league">League</Label>
-                      <Select value={formData.leagueId} onValueChange={(value) => setFormData({...formData, leagueId: value})}>
+                      <Select value={formData.league_id} onValueChange={(value) => setFormData({...formData, league_id: value})}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select league" />
                         </SelectTrigger>
@@ -260,8 +257,8 @@ export default function AdminTeamsPage() {
                       <Input
                         id="goalsFor"
                         type="number"
-                        value={formData.goalsFor}
-                        onChange={(e) => setFormData({...formData, goalsFor: parseInt(e.target.value) || 0})}
+                        value={formData.goals_for}
+                        onChange={(e) => setFormData({...formData, goals_for: parseInt(e.target.value) || 0})}
                       />
                     </div>
                     <div className="grid gap-2">
@@ -269,8 +266,8 @@ export default function AdminTeamsPage() {
                       <Input
                         id="goalsAgainst"
                         type="number"
-                        value={formData.goalsAgainst}
-                        onChange={(e) => setFormData({...formData, goalsAgainst: parseInt(e.target.value) || 0})}
+                        value={formData.goals_against}
+                        onChange={(e) => setFormData({...formData, goals_against: parseInt(e.target.value) || 0})}
                       />
                     </div>
                   </div>
@@ -316,7 +313,7 @@ export default function AdminTeamsPage() {
                       </CardDescription>
                     </div>
                     <Badge variant="outline">
-                      {getLeagueName(team.leagueId)}
+                      {getLeagueName(team.league_id)}
                     </Badge>
                   </div>
                 </CardHeader>
@@ -344,7 +341,7 @@ export default function AdminTeamsPage() {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Goals</span>
-                        <span className="font-medium">{team.goalsFor} - {team.goalsAgainst}</span>
+                        <span className="font-medium">{team.goals_for} - {team.goals_against}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Coach</span>
@@ -413,7 +410,7 @@ export default function AdminTeamsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="edit-league">League</Label>
-                    <Select value={formData.leagueId} onValueChange={(value) => setFormData({...formData, leagueId: value})}>
+                    <Select value={formData.league_id} onValueChange={(value) => setFormData({...formData, league_id: value})}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select league" />
                       </SelectTrigger>
@@ -487,8 +484,8 @@ export default function AdminTeamsPage() {
                     <Input
                       id="edit-goalsFor"
                       type="number"
-                      value={formData.goalsFor}
-                      onChange={(e) => setFormData({...formData, goalsFor: parseInt(e.target.value) || 0})}
+                      value={formData.goals_for}
+                      onChange={(e) => setFormData({...formData, goals_for: parseInt(e.target.value) || 0})}
                     />
                   </div>
                   <div className="grid gap-2">
@@ -496,8 +493,8 @@ export default function AdminTeamsPage() {
                     <Input
                       id="edit-goalsAgainst"
                       type="number"
-                      value={formData.goalsAgainst}
-                      onChange={(e) => setFormData({...formData, goalsAgainst: parseInt(e.target.value) || 0})}
+                      value={formData.goals_against}
+                      onChange={(e) => setFormData({...formData, goals_against: parseInt(e.target.value) || 0})}
                     />
                   </div>
                 </div>
