@@ -35,6 +35,14 @@ export const teamService = {
       .eq('league_id', leagueId);
     if (error) throw error;
     return data;
+  },
+  async getTeam(id: string) {
+    const { data, error } = await supabase
+      .from('teams')
+      .select('*')
+      .eq('id', id);
+    if (error) throw error;
+    return data;
   }
 };
 
@@ -44,6 +52,14 @@ export const playerService = {
     const { data, error } = await supabase
       .from('players')
       .select('*');
+    if (error) throw error;
+    return data;
+  },
+  async getPlayersByTeam(teamId: string) {
+    const { data, error } = await supabase
+      .from('players')
+      .select('*')
+      .eq('team_id', teamId);
     if (error) throw error;
     return data;
   }

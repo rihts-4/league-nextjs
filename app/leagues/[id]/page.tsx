@@ -1,5 +1,5 @@
 import { leagueService, teamService } from "@/services/supabaseService";
-import LeaguePage from "@/components/League";
+import LeaguePage from "@/components/pages/League";
 
 export async function generateStaticParams() {
     const leagues = await leagueService.getLeagues();
