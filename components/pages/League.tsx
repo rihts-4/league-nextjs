@@ -161,9 +161,9 @@ export default function LeaguePage({ league, teams }: { league: League, teams: T
 
           {/* Navigation Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-1">
               <TabsTrigger value="standings">Standings</TabsTrigger>
-              <TabsTrigger value="schedule">Schedule</TabsTrigger>
+              {/* <TabsTrigger value="schedule">Schedule</TabsTrigger> */}
             </TabsList>
 
             <TabsContent value="standings" className="space-y-6">

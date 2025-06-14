@@ -194,10 +194,10 @@ export default function TeamPage({ team, players }: { team: Team, players: Playe
 
           {/* Navigation Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-1">
               <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="players">Players</TabsTrigger>
-              <TabsTrigger value="matches">Matches</TabsTrigger>
+              {/* <TabsTrigger value="players">Players</TabsTrigger> */}
+              {/* <TabsTrigger value="matches">Matches</TabsTrigger> */}
             </TabsList>
 
             <TabsContent value="overview" className="space-y-6">
