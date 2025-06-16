@@ -1,21 +1,45 @@
 import { supabase } from '../lib/supabase';
+import { League } from '@/types';
 
 // League operations
 export const leagueService = {
-  async getLeagues() {
+  async getLeagues(): Promise<League[]> {
     const { data, error } = await supabase
       .from('leagues')
       .select('*');
     if (error) { throw error };
     return data;
   },
-  async getLeague(id: string) {
-    const { data, error } = await supabase
+  async getLeague(id: string): Promise<League> {
+    const { data: league, error } = await supabase
       .from('leagues')
       .select('*')
       .eq('id', id);
     if (error) throw error;
-    return data;
+    return league[0];
+  },
+  async addLeague(league: League): Promise<League[]> {
+    const { error } = await supabase
+      .from('leagues')
+      .insert(league);
+    if (error) throw error;
+    return this.getLeagues();
+  },
+  async editLeague(league: League): Promise<League[]> {
+    const { error } = await supabase
+      .from('leagues')
+      .update(league)
+      .eq('id', league.id);
+    if (error) throw error;
+    return this.getLeagues();
+  },
+  async deleteLeague(id: string): Promise<League[]> {
+    const { error } = await supabase
+      .from('leagues')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+    return this.getLeagues();
   }
 };
 

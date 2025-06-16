@@ -16,6 +16,7 @@ export default function useFetchData() {
     const [games, setGames] = useState<Game[]>([]);
 
     useEffect(() => {
+        console.log('fetching data.....')
         const fetchData = async () => {
             try {
                 const leagues = await leagueService.getLeagues();
@@ -35,6 +36,7 @@ export default function useFetchData() {
         };
 
         fetchData();
+        console.log('data fetched.....')
     }, []);
     return {
         leagues,

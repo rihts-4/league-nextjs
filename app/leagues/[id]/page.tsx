@@ -16,5 +16,5 @@ export default async function OneLeaguePage(
     const { id } = await params;
     const league = await leagueService.getLeague(id);
     const teams = await teamService.getTeamByLeague(id);
-    return <LeaguePage league={league[0]} teams={teams} />;
+    return <LeaguePage league={league} teams={teams} />;
 }

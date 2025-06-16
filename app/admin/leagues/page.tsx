@@ -20,6 +20,8 @@ import {
   Search
 } from 'lucide-react';
 import useFetchData from '@/hooks/useFetchData';
+import { addLeague, deleteLeague, editLeague } from '@/app/api/actions';
+import { League } from '@/types';
 
 export default function AdminLeaguesPage() {
   const { isAdmin } = useAuth();
@@ -74,38 +76,49 @@ export default function AdminLeaguesPage() {
     });
   };
 
-  const handleCreateLeague = () => {
+  const handleCreateLeague = async () => {
+    console.log('sending.....')
     const newLeague = {
-      id: Date.now().toString(),
       ...formData,
       created_at: new Date().toISOString()
     };
-    setLeagues([...leagues, newLeague]);
+    await addLeague(newLeague).then(updatedLeagues => {
+      console.log('updating server state.....')
+      setLeagues(updatedLeagues);
+    });
     setIsCreateDialogOpen(false);
     resetForm();
   };
 
-  const handleEditLeague = () => {
+  const handleEditLeague = async () => {
     if (selectedLeague) {
-      const updatedLeagues = leagues.map(league =>
-        league.id === selectedLeague.id
-          ? { ...league, ...formData }
-          : league
-      );
-      setLeagues(updatedLeagues);
+      console.log('updating.....')
+      const editedLeague= {
+        ...selectedLeague,
+        ...formData
+      }
+
+      await editLeague(editedLeague).then(updatedLeagues => {
+        console.log('updating server state.....')
+        setLeagues(updatedLeagues);
+      });
       setIsEditDialogOpen(false);
       setSelectedLeague(null);
       resetForm();
     }
   };
 
-  const handleDeleteLeague = (leagueId: string) => {
+  const handleDeleteLeague = async (leagueId: string) => {
     if (confirm('Are you sure you want to delete this league? This action cannot be undone.')) {
-      setLeagues(leagues.filter(league => league.id !== leagueId));
+      console.log('deleting.....')
+      await deleteLeague(leagueId).then(updatedLeagues => {
+        console.log('updating server state.....')
+        setLeagues(updatedLeagues); //have to change it later to update the games and teams and players as well
+      });
     }
   };
 
-  const openEditDialog = (league: any) => {
+  const openEditDialog = (league: League) => {
     setSelectedLeague(league);
     setFormData({
       name: league.name,
@@ -264,7 +277,7 @@ export default function AdminLeaguesPage() {
                       <div className="text-sm text-gray-500">
                         <div className="flex items-center">
                           <Users className="h-4 w-4 mr-1" />
-                          {getLeagueTeamCount(league.id)} teams
+                          {getLeagueTeamCount(league.id || '')} teams
                         </div>
                       </div>
                       <Badge variant={league.status === 'active' ? 'default' : 'secondary'}>
@@ -274,7 +287,7 @@ export default function AdminLeaguesPage() {
                         <Button size="sm" variant="outline" onClick={() => openEditDialog(league)}>
                           <Edit className="h-3 w-3" />
                         </Button>
-                        <Button size="sm" variant="outline" onClick={() => handleDeleteLeague(league.id)}>
+                        <Button size="sm" variant="outline" onClick={() => handleDeleteLeague(league.id || '')}>
                           <Trash2 className="h-3 w-3" />
                         </Button>
                       </div>
@@ -346,12 +359,12 @@ export default function AdminLeaguesPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="edit-startDate">Start Date</Label>
-                    <Input
-                      id="edit-startDate"
-                      type="date"
-                      value={formData.start_date}
-                      onChange={(e) => setFormData({...formData, start_date: e.target.value})}
-                    />
+                      <Input
+                        id="edit-startDate"
+                        type="date"
+                        value={formData.start_date}
+                        onChange={(e) => setFormData({...formData, start_date: e.target.value})}
+                      />
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="edit-endDate">End Date</Label>

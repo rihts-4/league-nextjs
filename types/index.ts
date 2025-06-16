@@ -1,5 +1,5 @@
 export interface League {
-  id: string;
+  id?: string;
   name: string;
   description: string;
   season: string;
@@ -11,7 +11,7 @@ export interface League {
 }
 
 export interface Team {
-  id: string;
+  id?: string;
   name: string;
   league_id: string;
   coach: string;
@@ -27,7 +27,7 @@ export interface Team {
 }
 
 export interface Player {
-  id: string;
+  id?: string;
   name: string;
   team_id: string;
   position: string;
@@ -40,7 +40,7 @@ export interface Player {
 }
 
 export interface Game {
-  id: string;
+  id?: string;
   league_id: string;
   home_team_id: string;
   away_team_id: string;
