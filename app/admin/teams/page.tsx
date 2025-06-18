@@ -19,6 +19,7 @@ import {
   Search,
 } from 'lucide-react';
 import useFetchData from '@/hooks/useFetchData';
+import { addTeam, editTeam, deleteTeam } from '@/app/api/actions';
 
 
 export default function AdminTeamsPage() {
@@ -87,33 +88,44 @@ export default function AdminTeamsPage() {
     });
   };
 
-  const handleCreateTeam = () => {
-    const newTeam = {
-      id: Date.now().toString(),
-      ...formData
-    };
-    setTeams([...teams, newTeam]);
+  const handleCreateTeam = async () => {
+    console.log('sending.....')
+    const newTeam = { ...formData };
+    await addTeam(newTeam).then(updatedTeams => {
+      console.log('updating server state.....')
+      setTeams(updatedTeams);
+      console.log('server state updated')
+    });
     setIsCreateDialogOpen(false);
     resetForm();
   };
 
-  const handleEditTeam = () => {
+  const handleEditTeam = async () => {
     if (selectedTeam) {
-      const updatedTeams = teams.map(team =>
-        team.id === selectedTeam.id
-          ? { ...team, ...formData }
-          : team
-      );
-      setTeams(updatedTeams);
+      console.log('updating.....')
+      const editedTeam = {
+        ...selectedTeam,
+        ...formData
+      }
+      await editTeam(editedTeam).then(updatedTeams => {
+        console.log('updating server state.....')
+        setTeams(updatedTeams);
+        console.log('server state updated')
+      });
       setIsEditDialogOpen(false);
       setSelectedTeam(null);
       resetForm();
     }
   };
 
-  const handleDeleteTeam = (teamId: string) => {
+  const handleDeleteTeam = async (teamId: string) => {
     if (confirm('Are you sure you want to delete this team? This action cannot be undone.')) {
-      setTeams(teams.filter(team => team.id !== teamId));
+      console.log('deleting.....')
+      await deleteTeam(teamId).then(updatedTeams => {
+        console.log('updating server state.....')
+        setTeams(updatedTeams);
+        console.log('server state updated')
+      });
     }
   };
 
@@ -189,7 +201,7 @@ export default function AdminTeamsPage() {
                         </SelectTrigger>
                         <SelectContent>
                           {leagues.map(league => (
-                            <SelectItem key={league.id} value={league.id}>{league.name}</SelectItem>
+                            <SelectItem key={league.id} value={league.id || ''}>{league.name}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -208,6 +220,7 @@ export default function AdminTeamsPage() {
                     <Label htmlFor="founded">Founded Year</Label>
                     <Input
                       id="founded"
+                      type='date'
                       value={formData.founded}
                       onChange={(e) => setFormData({...formData, founded: e.target.value})}
                       placeholder="e.g., 2020"
@@ -349,7 +362,7 @@ export default function AdminTeamsPage() {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Players</span>
-                        <span className="font-medium">{getTeamPlayerCount(team.id)}</span>
+                        <span className="font-medium">{getTeamPlayerCount(team.id || '')}</span>
                       </div>
                     </div>
 
@@ -358,7 +371,7 @@ export default function AdminTeamsPage() {
                         <Edit className="h-3 w-3 mr-1" />
                         Edit
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => handleDeleteTeam(team.id)} className="flex-1">
+                      <Button size="sm" variant="outline" onClick={() => handleDeleteTeam(team.id || '')} className="flex-1">
                         <Trash2 className="h-3 w-3 mr-1" />
                         Delete
                       </Button>
@@ -416,7 +429,7 @@ export default function AdminTeamsPage() {
                       </SelectTrigger>
                       <SelectContent>
                         {leagues.map(league => (
-                          <SelectItem key={league.id} value={league.id}>{league.name}</SelectItem>
+                          <SelectItem key={league.id} value={league.id || ''}>{league.name}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>

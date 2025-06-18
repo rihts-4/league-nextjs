@@ -41,7 +41,6 @@ export function Navigation() {
     { href: '/admin', label: 'Dashboard', icon: Shield },
     { href: '/admin/leagues', label: 'Manage Leagues', icon: Trophy },
     { href: '/admin/teams', label: 'Manage Teams', icon: Users },
-    { href: '/admin/players', label: 'Manage Players', icon: UserCheck },
     { href: '/admin/games', label: 'Manage Games', icon: Calendar },
   ];
 

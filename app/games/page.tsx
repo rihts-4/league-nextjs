@@ -202,7 +202,7 @@ export default function GamesPage() {
                   <SelectContent>
                     <SelectItem value="all">All Leagues</SelectItem>
                     {leagues.map(league => (
-                      <SelectItem key={league.id} value={league.id}>{league.name}</SelectItem>
+                      <SelectItem key={league.id} value={league.id || ''}>{league.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -242,7 +242,7 @@ export default function GamesPage() {
                   <SelectContent>
                     <SelectItem value="all">All Leagues</SelectItem>
                     {leagues.map(league => (
-                      <SelectItem key={league.id} value={league.id}>{league.name}</SelectItem>
+                      <SelectItem key={league.id} value={league.id || ''}>{league.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

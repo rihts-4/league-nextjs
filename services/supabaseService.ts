@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import { League } from '@/types';
+import { League, Team, Player, Game } from '@/types';
 
 // League operations
 export const leagueService = {
@@ -45,14 +45,14 @@ export const leagueService = {
 
 // Team operations
 export const teamService = {
-  async getTeams() {
+  async getTeams(): Promise<Team[]> {
     const { data, error } = await supabase
       .from('teams')
       .select('*');
     if (error) throw error;
     return data;
   },
-  async getTeamByLeague(leagueId: string) {
+  async getTeamByLeague(leagueId: string): Promise<Team[]> {
     const { data, error } = await supabase
       .from('teams')
       .select('*')
@@ -60,26 +60,49 @@ export const teamService = {
     if (error) throw error;
     return data;
   },
-  async getTeam(id: string) {
+  async getTeam(id: string): Promise<Team> {
     const { data, error } = await supabase
       .from('teams')
       .select('*')
       .eq('id', id);
     if (error) throw error;
-    return data;
+    return data[0];
+  },
+  async addTeam(team: Team): Promise<Team[]> {
+    const { error } = await supabase
+      .from('teams')
+      .insert(team);
+    if (error) throw error;
+    return this.getTeams();
+  },
+  async editTeam(team: Team): Promise<Team[]> {
+    const { error } = await supabase
+      .from('teams')
+      .update(team)
+      .eq('id', team.id);
+    if (error) throw error;
+    return this.getTeams();
+  },
+  async deleteTeam(id: string): Promise<Team[]> {
+    const { error } = await supabase
+      .from('teams')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+    return this.getTeams();
   }
 };
 
 // Player operations
 export const playerService = {
-  async getPlayers() {
+  async getPlayers(): Promise<Player[]> {
     const { data, error } = await supabase
       .from('players')
       .select('*');
     if (error) throw error;
     return data;
   },
-  async getPlayersByTeam(teamId: string) {
+  async getPlayersByTeam(teamId: string): Promise<Player[]> {
     const { data, error } = await supabase
       .from('players')
       .select('*')
@@ -91,11 +114,50 @@ export const playerService = {
 
 // Game operations
 export const gameService = {
-  async getGames() {
+  async getGames(): Promise<Game[]> {
     const { data, error } = await supabase
       .from('games')
       .select('*');
     if (error) throw error;
     return data;
+  },
+  async getGamesByTeam(teamId: string): Promise<Game[]> {
+    const { data, error } = await supabase
+      .from('games')
+      .select('*')
+      .eq('team_id', teamId);
+    if (error) throw error;
+    return data;
+  },
+  async getGamesByLeague(leagueId: string): Promise<Game[]> {
+    const { data, error } = await supabase
+      .from('games')
+      .select('*')
+      .eq('league_id', leagueId);
+    if (error) throw error;
+    return data;
+  },
+  async addGame(game: Game): Promise<Game[]> {
+    const { error } = await supabase
+      .from('games')
+      .insert(game);
+    if (error) throw error;
+    return this.getGames();
+  },
+  async editGame(game: Game): Promise<Game[]> {
+    const { error } = await supabase
+      .from('games')
+      .update(game)
+      .eq('id', game.id);
+    if (error) throw error;
+    return this.getGames();
+  },
+  async deleteGame(id: string): Promise<Game[]> {
+    const { error } = await supabase
+      .from('games')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+    return this.getGames();
   }
 }; 

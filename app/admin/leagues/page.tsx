@@ -85,6 +85,7 @@ export default function AdminLeaguesPage() {
     await addLeague(newLeague).then(updatedLeagues => {
       console.log('updating server state.....')
       setLeagues(updatedLeagues);
+      console.log('server state updated')
     });
     setIsCreateDialogOpen(false);
     resetForm();
@@ -101,6 +102,7 @@ export default function AdminLeaguesPage() {
       await editLeague(editedLeague).then(updatedLeagues => {
         console.log('updating server state.....')
         setLeagues(updatedLeagues);
+        console.log('server state updated')
       });
       setIsEditDialogOpen(false);
       setSelectedLeague(null);
@@ -113,7 +115,8 @@ export default function AdminLeaguesPage() {
       console.log('deleting.....')
       await deleteLeague(leagueId).then(updatedLeagues => {
         console.log('updating server state.....')
-        setLeagues(updatedLeagues); //have to change it later to update the games and teams and players as well
+        setLeagues(updatedLeagues);
+        console.log('server state updated')
       });
     }
   };

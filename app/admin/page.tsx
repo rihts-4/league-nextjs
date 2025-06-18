@@ -137,12 +137,12 @@ export default function AdminDashboard() {
                       Add Team
                     </Button>
                   </Link>
-                  <Link href="/admin/players">
+                  {/* <Link href="/admin/players">
                     <Button className="w-full" variant="outline">
                       <UserCheck className="h-4 w-4 mr-2" />
                       Register Player
                     </Button>
-                  </Link>
+                  </Link> */}
                   <Link href="/admin/games">
                     <Button className="w-full" variant="outline">
                       <Calendar className="h-4 w-4 mr-2" />

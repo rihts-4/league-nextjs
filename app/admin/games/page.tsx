@@ -24,6 +24,7 @@ import {
   Trophy,
 } from 'lucide-react';
 import useFetchData from '@/hooks/useFetchData';
+import { addGame, editGame, deleteGame } from '@/app/api/actions';
 
 export default function AdminGamesPage() {
   const { isAdmin } = useAuth();
@@ -126,33 +127,44 @@ export default function AdminGamesPage() {
     });
   };
 
-  const handleCreateGame = () => {
-    const newGame = {
-      id: Date.now().toString(),
-      ...formData
-    };
-    setGames([...games, newGame]);
+  const handleCreateGame = async () => {
+    console.log('sending.....')
+    const newGame = { ...formData };
+    await addGame(newGame).then(updatedGames => {
+      console.log('updating server state.....')
+      setGames(updatedGames);
+      console.log('server state updated')
+    });
     setIsCreateDialogOpen(false);
     resetForm();
   };
 
-  const handleEditGame = () => {
+  const handleEditGame = async () => {
     if (selectedGame) {
-      const updatedGames = games.map(game =>
-        game.id === selectedGame.id
-          ? { ...game, ...formData }
-          : game
-      );
-      setGames(updatedGames);
+      console.log('updating.....')
+      const editedGame = {
+        ...selectedGame,
+        ...formData
+      }
+      await editGame(editedGame).then(updatedGames => {
+        console.log('updating server state.....')
+        setGames(updatedGames);
+        console.log('server state updated')
+      });
       setIsEditDialogOpen(false);
       setSelectedGame(null);
       resetForm();
     }
   };
 
-  const handleDeleteGame = (gameId: string) => {
+  const handleDeleteGame = async (gameId: string) => {
     if (confirm('Are you sure you want to delete this game? This action cannot be undone.')) {
-      setGames(games.filter(game => game.id !== gameId));
+      console.log('deleting.....')
+      await deleteGame(gameId).then(updatedGames => {
+        console.log('updating server state.....')
+        setGames(updatedGames);
+        console.log('server state updated')
+      });
     }
   };
 
@@ -210,7 +222,7 @@ export default function AdminGamesPage() {
                       </SelectTrigger>
                       <SelectContent>
                         {leagues.map(league => (
-                          <SelectItem key={league.id} value={league.id}>{league.name}</SelectItem>
+                          <SelectItem key={league.id} value={league.id || ''}>{league.name}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -224,7 +236,7 @@ export default function AdminGamesPage() {
                         </SelectTrigger>
                         <SelectContent>
                           {getTeamsForLeague(formData.league_id).map(team => (
-                            <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>
+                            <SelectItem key={team.id} value={team.id || ''}>{team.name}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -237,7 +249,7 @@ export default function AdminGamesPage() {
                         </SelectTrigger>
                         <SelectContent>
                           {getTeamsForLeague(formData.league_id).filter(team => team.id !== formData.home_team_id).map(team => (
-                            <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>
+                            <SelectItem key={team.id} value={team.id || ''}>{team.name}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -428,7 +440,7 @@ export default function AdminGamesPage() {
                           <Edit className="h-3 w-3 mr-1" />
                           Edit
                         </Button>
-                        <Button size="sm" variant="outline" onClick={() => handleDeleteGame(game.id)}>
+                        <Button size="sm" variant="outline" onClick={() => handleDeleteGame(game.id || '')}>
                           <Trash2 className="h-3 w-3 mr-1" />
                           Delete
                         </Button>
@@ -466,7 +478,7 @@ export default function AdminGamesPage() {
                     </SelectTrigger>
                     <SelectContent>
                       {leagues.map(league => (
-                        <SelectItem key={league.id} value={league.id}>{league.name}</SelectItem>
+                        <SelectItem key={league.id} value={league.id || ''}>{league.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -480,7 +492,7 @@ export default function AdminGamesPage() {
                       </SelectTrigger>
                       <SelectContent>
                         {getTeamsForLeague(formData.league_id).map(team => (
-                          <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>
+                          <SelectItem key={team.id} value={team.id || ''}>{team.name}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -493,7 +505,7 @@ export default function AdminGamesPage() {
                       </SelectTrigger>
                       <SelectContent>
                         {getTeamsForLeague(formData.league_id).filter(team => team.id !== formData.home_team_id).map(team => (
-                          <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>
+                          <SelectItem key={team.id} value={team.id || ''}>{team.name}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
